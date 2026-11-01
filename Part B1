@@ -1,0 +1,112 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ android:padding="16dp">
+ <EditText
+ android:id="@+id/etPhone"
+ android:layout_width="match_parent"
+ android:layout_height="48dp"
+ android:hint="Phone Number" />
+ <EditText
+ android:id="@+id/etMessage"
+ android:layout_width="match_parent"
+ android:layout_height="48dp"
+ android:hint="Message" />
+ <EditText
+ android:id="@+id/etEmail"
+ android:layout_width="match_parent"
+ android:layout_height="48dp"
+ android:hint="Email Address" />
+ <Button
+ android:id="@+id/btnSms"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:text="Send SMS" />
+ <Button
+ android:id="@+id/btnCall"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:text="Make Call" />
+ <Button
+ android:id="@+id/btnEmail"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:text="Send Email" />
+</LinearLayout>
+
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ <application
+ android:allowBackup="true"
+ android:label="TelephonyApp"
+ android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+ <activity
+ android:name=".MainActivity"
+ android:exported="true">
+ <intent-filter>
+ <action android:name="android.intent.action.MAIN" />
+ <category android:name="android.intent.category.LAUNCHER" />
+ </intent-filter>
+ </activity>
+ </application>
+</manifest>
+
+
+
+
+import static com.example.BIHE.R.*;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+ EditText etPhone, etMessage, etEmail;
+ Button btnSms, btnCall, btnEmail;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ etPhone = findViewById(R.id.etPhone);
+ etMessage = findViewById(R.id.etMessage);
+ etEmail = findViewById(R.id.etEmail);
+ btnSms = findViewById(R.id.btnSms);
+ btnCall = findViewById(R.id.btnCall);
+ btnEmail = findViewById(R.id.btnEmail);
+ btnSms.setOnClickListener(v -> {
+ Intent intent = new Intent(Intent.ACTION_VIEW);
+ intent.setData(Uri.parse("sms:" + etPhone.getText().toString()));
+ intent.putExtra("sms_body", etMessage.getText().toString());
+ startActivity(intent);
+ });
+ btnCall.setOnClickListener(v -> {
+ Intent intent = new Intent(
+ Intent.ACTION_DIAL,
+ Uri.parse("tel:" + etPhone.getText().toString()));
+ startActivity(intent);
+ });
+ btnEmail.setOnClickListener(v -> {
+ Intent intent = new Intent(Intent.ACTION_SEND);
+ intent.setType("message/rfc822");
+ intent.putExtra(
+ Intent.EXTRA_EMAIL,
+ new String[]{etEmail.getText().toString()});
+ intent.putExtra(
+ Intent.EXTRA_SUBJECT,
+ "Test Mail");
+ intent.putExtra(
+ Intent.EXTRA_TEXT,
+ "Hello from Android Application");
+ startActivity(
+ Intent.createChooser(
+ intent,
+ "Select Email App"));
+ });
+ }
+}
